@@ -53,11 +53,16 @@ public class FishController {
     public String deleteFish(@RequestParam int id) {
 
         try {
-
             Fish fish = repo.findById(id).get();
 
-            Path imagePath = Paths.get("public/images/" + fish.getImageFileNames());
-            Files.delete(imagePath);
+            fish.getImageFileNames().forEach((fileName) -> {
+                try {
+                    Files.delete(Paths.get("public/images/" + fileName));
+                } catch (Exception ex) {
+                    System.out.println("Exception deleting file: " + fileName + " - " + ex.getMessage());
+                }
+            });
+
             repo.delete(fish);
 
         } catch (Exception ex) {
